@@ -1,0 +1,17 @@
+filename,face_detected,pupils_found,distance_px
+lena_scale_1.0.jpg,True,2,72.3394774656273
+frame_NIR_000122.jpg,True,0,
+frame_NIR_000088.jpg,True,0,
+obama.jpg,True,2,342.49817517762045
+pexels-ketut-subiyanto-4584534.jpg,True,3,756.2572313703849
+frame_NIR_000022.jpg,True,0,
+pexels-soc-nang-d-ng-2150345854-36263265.jpg,True,2,1428.7903975041265
+pexels-cottonbro-8090289.jpg,True,2,581.0309802411572
+lena.jpg,True,2,72.24956747275377
+lena_scale_1.5.jpg,True,2,71.0
+lena_scale_0.75.jpg,True,1,
+frame_NIR_001391.jpg,False,0,
+frame_NIR_001995.jpg,False,0,
+frame_NIR_000047.jpg,True,0,
+lena_scale_2.0.jpg,True,2,124.25779653607253
+lena_scale_0.5.jpg,True,0,

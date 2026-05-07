@@ -9,7 +9,7 @@ def detect_face_features(image_path, output_path):
         static_image_mode=True, 
         max_num_faces=1,
         refine_landmarks=True,
-        min_detection_confidence=0.5 # 提高信心值
+        min_detection_confidence=0.5
     )
     mp_drawing = mp.solutions.drawing_utils
     mp_drawing_styles = mp.solutions.drawing_styles
@@ -18,13 +18,11 @@ def detect_face_features(image_path, output_path):
     if image is None:
         return False
 
-    # 由於 Test_Database 是彩色影像，直接轉換為 RGB
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     results = face_mesh.process(image_rgb)
 
     if results.multi_face_landmarks:
         for face_landmarks in results.multi_face_landmarks:
-            # 繪製完整的面部網格與輪廓
             mp_drawing.draw_landmarks(
                 image=image,
                 landmark_list=face_landmarks,
@@ -44,15 +42,15 @@ def detect_face_features(image_path, output_path):
     return False
 
 if __name__ == "__main__":
-    # 測試新的資料庫
-    test_dir = "Test_Database"
-    output_dir = "results"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    test_dir = os.path.join(BASE_DIR, "Test_Database")
+    output_dir = os.path.join(BASE_DIR, "results")
     
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         
     for filename in os.listdir(test_dir):
-        if filename.endswith(".jpg"):
+        if filename.lower().endswith((".jpg", ".png", ".jpeg")):
             img_path = os.path.join(test_dir, filename)
             output_path = os.path.join(output_dir, f"landmarks_{filename}")
             print(f"Testing on {img_path}...")
@@ -61,6 +59,10 @@ if __name__ == "__main__":
             else:
                 print(f"Failed to detect face in {img_path}")
                 
-    # 將其中一張成功的結果設為 README 的展示圖
-    if os.path.exists("results/landmarks_face1.jpg"):
-        os.system("cp results/landmarks_face1.jpg results/face_landmarks_result.jpg")
+    # Update README display image if exists
+    target_img = os.path.join(output_dir, "face_landmarks_result.jpg")
+    for f in os.listdir(output_dir):
+        if f.startswith("landmarks_") and f.endswith(".jpg"):
+            src = os.path.join(output_dir, f)
+            os.system(f"cp {src} {target_img}")
+            break

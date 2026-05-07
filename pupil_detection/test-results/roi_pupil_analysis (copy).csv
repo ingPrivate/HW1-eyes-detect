@@ -1,0 +1,14 @@
+filename,face_detected,pupils_found,distance_px
+lena_scale_1.0.jpg,True,2,72.3394774656273
+frame_NIR_000122.jpg,True,0,
+frame_NIR_000088.jpg,True,0,
+obama.jpg,True,2,342.49817517762045
+frame_NIR_000022.jpg,True,0,
+lena.jpg,True,2,72.24956747275377
+lena_scale_1.5.jpg,True,2,71.0
+lena_scale_0.75.jpg,True,1,
+frame_NIR_001391.jpg,False,0,
+frame_NIR_001995.jpg,False,0,
+frame_NIR_000047.jpg,True,0,
+lena_scale_2.0.jpg,True,2,124.25779653607253
+lena_scale_0.5.jpg,True,0,
