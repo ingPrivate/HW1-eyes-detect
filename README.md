@@ -14,22 +14,24 @@
 3. **極端側臉**：目前的 Haar Cascade 臉部模型主要針對正面設計，若人臉偏轉角度過大（接近側臉 90 度），將無法建立 ROI。
 
 ### 分析：影像處理流程
-實作此功能常用的電腦視覺演算法與技術：
+本專案採用以下電腦視覺演算法與技術：
 
-*   **Haar Cascades (哈爾特徵分類器)**：用於快速定位人臉與眼睛區域，建立搜尋基準。
-*   **Adaptive Case Profiles (自適應參數組合)**：根據臉部特徵自動切換偵測模式（例如：避開眉毛模式、高感度模式），應對不同臉型需求。
-*   **Eyebrow Avoidance (避眉邏輯)**：透過垂直偏移眼部 ROI 起始點並跳過區域頂部，有效解決濃眉導致的瞳孔誤判。
-*   **CLAHE (限制對比度自適應直方圖均衡化)**：強化影像局部對比度，凸顯暗部瞳孔特徵。
-*   **ROI (Region of Interest)**：限定搜尋範圍於眼部區域，大幅減少背景雜訊。
-*   **Symmetry Synchronization (對稱同步與補償)**：當單眼偵測失敗時自動補償位置，並同步雙眼半徑，消除「大小眼」。
-*   **Proportional Constraint (比例約束)**：將瞳孔半徑與臉部寬度掛鉤（約為臉寬的 1.8%），確保在不同解析度與尺度下的視覺一致性。
-*   **NIR v9-Parameter Fallback (紅外線穩定備援)**：針對 NIR 影像，若 Cascade 偵測失敗，自動切換至 v9 版本的全域高感度搜尋參數。
-*   **Darkest Point Fallback (最暗重心法)**：在極端環境（如瞇眼、皺紋多）下，利用局部最暗點定位瞳孔。
+| 技術 / 演算法 | 應用目的與細節 |
+| :--- | :--- |
+| **Haar Cascades** | 快速定位人臉與眼睛區域，建立搜尋基準。 |
+| **自適應參數 (Adaptive Profiles)** | 根據臉部特徵自動切換偵測模式（如：避眉模式、高感度模式）。 |
+| **避眉邏輯 (Eyebrow Avoidance)** | 垂直偏移眼部 ROI 起始點，跳過區域頂部，解決濃眉導致的誤判。 |
+| **CLAHE** | 強化局部對比度，凸顯暗部瞳孔特徵。 |
+| **ROI (Region of Interest)** | 鎖定眼部搜尋範圍，大幅減少背景雜訊干擾。 |
+| **對稱同步 (Symmetry Sync)** | 基於臉部對稱性，單眼偵測失敗時自動補償位置，同步雙眼半徑，消除「大小眼」。 |
+| **比例約束 (Proportional Constraint)** | 瞳孔半徑與臉寬掛鉤（約臉寬 1.8%），確保各解析度下的視覺一致性。 |
+| **NIR 穩定備援 (Fallback)** | 針對 NIR 影像，若 Cascade 失敗，自動切換全域高感度搜尋。 |
+| **最暗重心法 (Darkest Point)** | 針對瞇眼、深層皺紋等極端環境，利用局部最暗點精確定位瞳孔。 |
 
-### 加分題 (Bonus)
-*   **其他五官的偵測**：除了瞳孔之外，擴展到鼻子、嘴巴、耳朵等面部特徵點。
-*   **自動化參數調優**：程式能針對不同圖片自動選擇最優的搜尋 Profile，提升穩健性。
-*   **複雜背景排除**：成功處理濃眉、側光陰影、長者皺紋等導致的傳統影像處理錯誤。
+### 加分項目 (Bonus)
+*   **五官偵測**：擴展至鼻子、嘴巴、耳朵等面部特徵點辨識。
+*   **自動化參數調優**：依據影像自動套用最適 Profile，提升穩健性。
+*   **複雜背景排除**：克服濃眉、側光陰影、長者皺紋等傳統影像處理難題。
 
 ## 設計 
 
@@ -65,24 +67,27 @@ graph TD
 
 ## 實驗結果演算法對照 (以單一影像為例)
 
+展示單一影像在演算法各個處理階段的變化與技術細節：
+
 | 處理階段 | 演算法成果 | 技術細節 |
 | :--- | :---: | :--- |
-| **原始影像** | ![Original](pupil_detection/Database/frame_NIR_000022.jpg) | 讀取原始 NIR 或彩色高解析度影像。 |
-| **避眉優化 (v10)** | ![ROI Result](pupil_detection/output-png/output_v10/obama.jpg) | 透過 **ROI Shifting** 徹底解決先前版本「瞳孔長在眉毛上」的問題。 |
-| **對稱與比例同步** | ![Binarization](pupil_detection/output-png/output_v10/pexels-ketut-subiyanto-4584534.jpg) | 即使在極端表情下，仍能產出大小對稱、位置精確的標註。 |
-| **NIR 穩定備援** | ![Result](pupil_detection/output-png/output_v10/frame_NIR_000022.jpg) | 自動套用 **v9 備援參數**，維持工業紅外線影像的 100% 成功率。 |
-| **最終距離計算** | ![Final Result](pupil_detection/output-png/output_v10/lena.jpg) | 自動過濾雜訊，精確計算雙瞳幾何像素距離並標註數值。 |
+| **原始影像** | ![Original](pupil_detection/Database/frame_NIR_000022.jpg) | 讀取原始 1600x1300 NIR 高解析度影像。 |
+| **影像平滑化** | ![Gaussian Blur](face_analysis/results/step0_blurred.jpg) | 透過 **Gaussian Blur** 降低高頻雜訊。 |
+| **直方圖分割** | ![Binarization](face_analysis/results/step1_binarization.jpg) | 基於 **Histogram** 分佈進行二值化門檻分割。 |
+| **邊緣提取** | ![Edges](face_analysis/results/step2_edges.jpg) | 使用 **Canny Operator** 擷取瞳孔輪廓邊界。 |
+| **霍夫圓形擬合** | ![Hough Result](face_analysis/results/step3_hough_result.jpg) | 透過 **Hough Circle Transform** 精確標定圓心。 |
+| **最終距離計算** | ![Final Result](pupil_detection/output-png/output_v10/frame_NIR_000022.jpg) | 自動標定雙瞳中心並計算幾何像素距離。 |
 
 ## 極限測試
 
-本專案經過多樣化樣本測試，證明在極端環境下仍具備高偵測率：
+本專案經過多樣化樣本測試，證明在極端環境 (RGB 影像) 下仍具備高偵測率：
 
 | 測試場景 | 測試樣本 (v10 結果) | 技術突破說明 |
 | :--- | :---: | :--- |
-| **濃眉與側光** | ![Cottonbro](pupil_detection/output-png/output_v10/pexels-cottonbro-8090289.jpg) | **避眉邏輯**成功過濾深色眉毛，精確定位於陰影中的瞳孔。 |
+| **濃眉與側光** | ![Cottonbro](pupil_detection/output-png/output_v10/pexels-cottonbro-8090289.jpg) | **避眉邏輯 (Eyebrow Avoidance)** 成功過濾深色眉毛，精確定位於陰影中的瞳孔。 |
 | **高齡者偵測** | ![Elderly](pupil_detection/output-png/output_v10/pexels-soc-nang-d-ng-2150345854-36263265.jpg) | **結構先驗 ROI** 克服了深層皺紋的干擾，穩定抓取瞳孔中心。 |
-| **極端笑臉** | ![Smiling](pupil_detection/output-png/output_v10/pexels-ketut-subiyanto-4584534.jpg) | **最暗重心法** 成功穿透因微笑而變窄的眼縫，補足了傳統邊緣偵測的不足。 |
-| **工業 NIR** | ![NIR](pupil_detection/output-png/output_v10/frame_NIR_000122.jpg) | **v9 Fallback** 機制確保在無臉部特徵的紅外線環境下維持穩定輸出。 |
+| **極端笑臉** | ![Smiling](pupil_detection/output-png/output_v10/pexels-ketut-subiyanto-4584534.jpg) | **最暗重心法 (Darkest Point)** 成功穿透因微笑而變窄的眼縫，並加上**對稱與比例同步**畫出標準瞳孔。 |
+| **通用人臉** | ![Obama](pupil_detection/output-png/output_v10/obama.jpg) | **ROI Shifting** 與 **Symmetry Sync** 確保雙眼定位絕對對稱，解決大小眼問題。 |
 
 ## 加分項目
 *   **五官偵測**：使用 MediaPipe 偵測並標註眉、鼻、口等臉部特徵點。
@@ -90,4 +95,23 @@ graph TD
 
 ![五官偵測結果](face_analysis/results/face_landmarks_result.jpg)
 
+---
 
+## 執行方式
+
+### 瞳孔偵測 (自適應避眉版 v10)
+```bash
+cd pupil_detection
+python Code_v10.py
+```
+*(含自適應 Profile、避眉邏輯與 NIR v9 穩定備援功能)*
+
+### 五官特徵偵測
+```bash
+cd face_analysis
+python face_features_detect.py
+```
+
+## 參考與致敬 
+本專案的瞳孔偵測邏輯參考並改進自：
+*   [Pupil-detection-on-python](https://github.com/bushranajeeb/Pupil-detection-on-python) by [bushranajeeb](https://github.com/bushranajeeb) - 感謝其在瞳孔特徵提取演算法上的啟發。
