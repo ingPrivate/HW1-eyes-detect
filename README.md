@@ -76,7 +76,7 @@ graph TD
 | **直方圖分割** | ![Binarization](face_analysis/results/step1_binarization.jpg) | 基於 **Histogram** 分佈進行二值化門檻分割。 |
 | **邊緣提取** | ![Edges](face_analysis/results/step2_edges.jpg) | 使用 **Canny Operator** 擷取瞳孔輪廓邊界。 |
 | **霍夫圓形擬合** | ![Hough Result](face_analysis/results/step3_hough_result.jpg) | 透過 **Hough Circle Transform** 精確標定圓心。 |
-| **最終距離計算** | ![Final Result](pupil_detection/output-png/output_v10/frame_NIR_000022.jpg) | 自動標定雙瞳中心並計算幾何像素距離。 |
+| **最終距離計算** | ![Final Result](pupil_detection/output-png/output_v9/frame_NIR_000047.jpg) | 自動標定雙瞳中心並計算幾何像素距離。 |
 
 ## 極限測試
 
@@ -94,24 +94,3 @@ graph TD
 *   **極限測試**：成功處理 NIR 影像、超高解析度人像、老人、笑臉等多樣化樣本。
 
 ![五官偵測結果](face_analysis/results/face_landmarks_result.jpg)
-
----
-
-## 執行方式
-
-### 瞳孔偵測 (自適應避眉版 v10)
-```bash
-cd pupil_detection
-python Code_v10.py
-```
-*(含自適應 Profile、避眉邏輯與 NIR v9 穩定備援功能)*
-
-### 五官特徵偵測
-```bash
-cd face_analysis
-python face_features_detect.py
-```
-
-## 參考與致敬 
-本專案的瞳孔偵測邏輯參考並改進自：
-*   [Pupil-detection-on-python](https://github.com/bushranajeeb/Pupil-detection-on-python) by [bushranajeeb](https://github.com/bushranajeeb) - 感謝其在瞳孔特徵提取演算法上的啟發。
